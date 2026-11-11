@@ -29,3 +29,9 @@ Installation
 Group
 
 Alesara – WeCanAcademy AI Course Season 12.
+
+Group names
+
+Samuel Mwangi
+Rachael Wangui
+Alexia Wangui
