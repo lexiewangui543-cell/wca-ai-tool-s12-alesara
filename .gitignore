@@ -1,0 +1,7 @@
+venv/
+_pycache__/
+*.pyc
+.env
+temp_test1.py
+temp_test.py
+
