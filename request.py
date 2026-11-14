@@ -10,4 +10,4 @@ response = requests.get(url, timeout=10)
 #     print ("city:", user["address"]["city"])
 # else:
 #  print ("request failed:", response.status_code())
-print (response.json)
+print (response.json())
