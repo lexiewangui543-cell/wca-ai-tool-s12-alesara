@@ -27,3 +27,25 @@ def save_session(session_data):
         json.dump(session_data, file, indent=4)
 
     return file_path
+
+def load_session(session_id):
+    file_path = SESSIONS_FOLDER / f"{session_id}.json"
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        session_data = json.load(file)
+
+
+    return session_data
+def list_sessions():
+    sessions = []
+
+    if not SESSIONS_FOLDER.exists():
+        return sessions
+
+    for file_path in SESSIONS_FOLDER.glob("*.json"):
+        with open(file_path, "r", encoding="utf-8") as file:
+            session_data = json.load(file)
+
+        sessions.append(session_data)
+
+    return sessions
