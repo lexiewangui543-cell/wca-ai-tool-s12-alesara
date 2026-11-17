@@ -30,12 +30,17 @@ def save_session(session_data):
 
 def load_session(session_id):
     file_path = SESSIONS_FOLDER / f"{session_id}.json"
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            session_data = json.load(file)
 
-    with open(file_path, "r", encoding="utf-8") as file:
-        session_data = json.load(file)
+        return session_data
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError:
+        print("Error: Failed to decode JSON from the session file.")
+        return None
 
-
-    return session_data
 def list_sessions():
     sessions = []
 
@@ -49,3 +54,12 @@ def list_sessions():
         sessions.append(session_data)
 
     return sessions
+
+def delete_session(session_id):
+    file_path = SESSIONS_FOLDER / f"{session_id}.json"
+
+    if file_path.exists():
+        file_path.unlink()
+        return True
+
+    return False
