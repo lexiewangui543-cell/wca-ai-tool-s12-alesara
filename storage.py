@@ -48,10 +48,13 @@ def list_sessions():
         return sessions
 
     for file_path in SESSIONS_FOLDER.glob("*.json"):
-        with open(file_path, "r", encoding="utf-8") as file:
-            session_data = json.load(file)
-
-        sessions.append(session_data)
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                session_data = json.load(file)
+            sessions.append(session_data)
+        except json.JSONDecodeError:
+            print(f"Error: Failed to decode JSON from the session file: {file_path}")
+    
 
     return sessions
 

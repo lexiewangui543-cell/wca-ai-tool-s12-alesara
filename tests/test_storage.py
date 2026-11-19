@@ -85,3 +85,23 @@ class TestStorage(unittest.TestCase):
         result = load_session("broken")
 
         self.assertIsNone(result)
+    def test_list_empty_sessions(self):
+        sessions = list_sessions()
+
+        self.assertEqual(sessions, [])
+    def test_delete_missing_session(self):
+        result = delete_session("nonexistent-session")
+
+        self.assertFalse(result)
+        
+    def test_list_sessions_with_corrupted_file(self):
+        session = create_session("Valid Session")
+        save_session(session)
+
+        corrupted_file = storage.SESSIONS_FOLDER / "broken.json"
+        corrupted_file.write_text("{invalid json}", encoding="utf-8")
+
+        sessions = list_sessions()
+
+        self.assertEqual(len(sessions), 1)
+        self.assertEqual(sessions[0]["session_name"], "Valid Session")
