@@ -18,7 +18,7 @@ from prompts import SYSTEM_PROMPT, SUMMARY_PROMPT
 # STEP 1: Load environment variables
 # --------------------------------------------
 
-load_dotenv()
+load_dotenv(override=True)
 
 MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
@@ -170,6 +170,7 @@ def validate_summary(data):
 # STEP 5: Send request and retry invalid JSON
 # --------------------------------------------
 
+
 def request_json(instructions, conversation_history, validator):
 
     client = get_openai_client()
@@ -178,37 +179,44 @@ def request_json(instructions, conversation_history, validator):
 
         try:
 
+            # Add an instruction requiring JSON output
+            api_input = conversation_history + [
+                {
+                    "role": "user",
+                    "content": (
+                        "IMPORTANT: Return your complete response "
+                        "as valid JSON only. Follow the required "
+                        "JSON structure and include all required fields."
+                    )
+                }
+            ]
+
+            # Send the request to OpenAI
             response = client.responses.create(
-
                 model=MODEL_NAME,
-
                 instructions=instructions,
-
-                input=conversation_history,
-
+                input=api_input,
                 text={
                     "format": {
                         "type": "json_object"
                     }
                 },
-
                 max_output_tokens=1200
             )
 
-            # Extract the AI response
+            # Extract AI response
             response_text = response.output_text
 
-            # Convert JSON text into a Python dictionary
+            # Convert JSON text into Python dictionary
             data = json.loads(response_text)
 
-            # Check whether the response is correct
+            # Validate the response
             validator(data)
 
             return data
 
         except (json.JSONDecodeError, ValueError) as error:
 
-            # Retry once if JSON is invalid
             if attempt == 0:
 
                 print("Invalid AI response. Retrying once...")
@@ -217,10 +225,9 @@ def request_json(instructions, conversation_history, validator):
                     {
                         "role": "user",
                         "content": (
-                            "Your previous response failed validation: "
+                            "Your previous response was invalid: "
                             + str(error)
-                            + ". Please correct it and return valid JSON "
-                            "with all required non-empty fields."
+                            + ". Return corrected valid JSON."
                         )
                     }
                 ]
@@ -228,12 +235,10 @@ def request_json(instructions, conversation_history, validator):
             else:
 
                 raise ValueError(
-                    "The AI returned an invalid response twice. "
-                    "Please try again."
+                    "The AI returned an invalid response twice."
                 ) from error
 
     raise ValueError("Unable to obtain a valid AI response.")
-
 
 # --------------------------------------------
 # STEP 6: Generate study questions and feedback
