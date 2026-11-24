@@ -1,9 +1,10 @@
+
 import json
 from pathlib import Path
 
 
 # Location of the cache file
-CACHE_FILE = Path(_file_).parent / "cache.json"
+CACHE_FILE = Path(__file__).parent / "cache.json"
 
 
 def normalize_question(question):
@@ -46,7 +47,7 @@ def get_cached_answer(question):
 
     cached_response = cache.get(question_key)
 
-    if cached_response:
+    if isinstance(cached_response, dict):
         return cached_response.get("answer")
 
     return None
