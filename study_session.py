@@ -1,13 +1,7 @@
-# ============================================
 # STUDY BUDDY - AI STUDY ASSISTANT
 # Study Session Module
 # Member 1: Study Session Development
-# ============================================
-
-
-# --------------------------------------------
 # FUNCTION 1: Get student information
-# --------------------------------------------
 
 def get_student_information():
 
@@ -25,10 +19,7 @@ def get_student_information():
 
     return student_name
 
-
-# --------------------------------------------
 # FUNCTION 2: Select a subject
-# --------------------------------------------
 
 def select_subject():
 
@@ -71,10 +62,7 @@ def get_topic():
 
         print("Topic cannot be empty. Please try again.")
 
-
-# --------------------------------------------
 # FUNCTION 4: Display session information
-# --------------------------------------------
 
 def display_session_information(name, subject, topic):
 
@@ -88,10 +76,7 @@ def display_session_information(name, subject, topic):
 
     print("=" * 45)
 
-
-# --------------------------------------------
 # FUNCTION 5: Run the study session
-# --------------------------------------------
 
 def run_study_session():
 
