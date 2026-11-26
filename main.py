@@ -1,15 +1,12 @@
-# ============================================
+
 # STUDY BUDDY - AI STUDY ASSISTANT
 # Main Application File
 # Member 1: Application Entry Point and Menu
-# ============================================
 
 import json
 
 
-# --------------------------------------------
 # FUNCTION 1: Display the welcome message
-# --------------------------------------------
 
 def display_welcome():
 
@@ -19,9 +16,7 @@ def display_welcome():
     print("=" * 45)
 
 
-# --------------------------------------------
 # FUNCTION 2: Display the main menu
-# --------------------------------------------
 
 def display_menu():
 
@@ -33,9 +28,7 @@ def display_menu():
     print("-" * 30)
 
 
-# --------------------------------------------
 # FUNCTION 3: Start a new study session
-# --------------------------------------------
 
 def start_new_session():
 
@@ -58,33 +51,28 @@ def start_new_session():
         print("Error:", error)
 
 
-# --------------------------------------------
 # FUNCTION 4: Open a previous study session
-# --------------------------------------------
-
 def open_previous_session():
 
     print("\nPREVIOUS STUDY SESSIONS")
     print("-" * 30)
 
     try:
-        # Import functions from the storage module
-        from storage import list_saved_sessions, load_session
+        from storage import list_sessions, load_session
 
-        # Get all saved sessions
-        sessions = list_saved_sessions()
+        # Retrieve all saved sessions
+        sessions = list_sessions()
 
-        # Check whether any sessions exist
         if not sessions:
             print("No previous study sessions found.")
             return
 
-        # Display the available sessions
+        # Display available sessions
         for index, session in enumerate(sessions, start=1):
-            print(f"{index}. {session.name}")
+            print(f"{index}. {session.get('session_name', 'Unnamed session')}")
 
-        # Ask the student to select a session
-        choice = input("\nSelect a session number: ")
+        # Ask the learner to select a session
+        choice = input("\nSelect a session number: ").strip()
 
         if not choice.isdigit():
             print("Invalid input. Please enter a number.")
@@ -96,34 +84,33 @@ def open_previous_session():
             print("Invalid session selection.")
             return
 
-        # Load the selected session
+        # Get the selected session ID
         selected_session = sessions[choice - 1]
+        session_id = selected_session.get("session_id")
 
-        session_data = load_session(selected_session)
+        if not session_id:
+            print("The selected session has no valid session ID.")
+            return
+
+        # Load the selected session
+        session_data = load_session(session_id)
+
+        if session_data is None:
+            print("Unable to retrieve the selected session.")
+            return
 
         # Display the saved session
         print("\nSAVED STUDY SESSION")
         print("-" * 30)
-
         print(json.dumps(session_data, indent=4))
 
-    except ModuleNotFoundError:
-        print("\nStorage module is not ready yet.")
-        print("We will connect it during project integration.")
-
-    except FileNotFoundError:
-        print("The selected session file could not be found.")
-
-    except json.JSONDecodeError:
-        print("The saved session contains invalid JSON.")
+    except ImportError as error:
+        print("Could not import the storage module:", error)
 
     except Exception as error:
         print("An error occurred:", error)
 
-
-# --------------------------------------------
 # FUNCTION 5: Run the main application
-# --------------------------------------------
 
 def main():
 
@@ -157,9 +144,7 @@ def main():
             print("Please select 1, 2 or 3.")
 
 
-# --------------------------------------------
 # FUNCTION 6: Application entry point
-# --------------------------------------------
 
 if __name__ == "__main__":
 

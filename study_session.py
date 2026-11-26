@@ -1,6 +1,21 @@
+
 # STUDY BUDDY - AI STUDY ASSISTANT
 # Study Session Module
 # Member 1: Study Session Development
+
+import json
+
+from ai_client import (
+    get_study_buddy_response,
+    generate_session_summary
+)
+
+from storage import (
+    create_session,
+    save_session
+)
+
+
 # FUNCTION 1: Get student information
 
 def get_student_information():
@@ -10,7 +25,6 @@ def get_student_information():
 
     student_name = input("Enter your name: ").strip()
 
-    # Check whether the student entered a name
     if not student_name:
         print("Name cannot be empty.")
         return None
@@ -18,6 +32,7 @@ def get_student_information():
     print(f"\nWelcome, {student_name}!")
 
     return student_name
+
 
 # FUNCTION 2: Select a subject
 
@@ -47,9 +62,7 @@ def select_subject():
         print("Invalid selection. Please choose between 1 and 5.")
 
 
-# --------------------------------------------
 # FUNCTION 3: Get the topic
-# --------------------------------------------
 
 def get_topic():
 
@@ -61,6 +74,7 @@ def get_topic():
             return topic
 
         print("Topic cannot be empty. Please try again.")
+
 
 # FUNCTION 4: Display session information
 
@@ -76,32 +90,199 @@ def display_session_information(name, subject, topic):
 
     print("=" * 45)
 
-# FUNCTION 5: Run the study session
+
+# FUNCTION 5: Run the AI tutoring interaction
+
+def run_ai_tutoring(student_name, subject, topic):
+
+    # Create conversation history
+
+    conversation_history = [
+        {
+            "role": "user",
+            "content": (
+                f"My name is {student_name}. "
+                f"I want to study {subject}, "
+                f"specifically {topic}. "
+                "Please start my study session by asking "
+                "me one question."
+            )
+        }
+    ]
+
+    print("\nSTUDY BUDDY IS PREPARING YOUR FIRST QUESTION...")
+
+    try:
+
+        # Request the first question from the AI
+
+        response = get_study_buddy_response(
+            conversation_history
+        )
+
+        while True:
+
+            # PROCESS 1: Display an AI-generated question
+
+            if response["type"] == "question":
+
+                conversation_history.append({
+                    "role": "assistant",
+                    "content": json.dumps(response)
+                })
+
+                print("\nSTUDY BUDDY")
+                print("-" * 30)
+                print(response["question"])
+
+                print("\nType END whenever you want to finish.")
+
+                # Collect learner's answer
+
+                learner_answer = input("\nYour answer: ").strip()
+
+                # Check whether learner wants to end
+
+                if learner_answer.upper() == "END":
+
+                    conversation_history.append({
+                        "role": "user",
+                        "content": (
+                            "END: The learner has ended "
+                            "the study session."
+                        )
+                    })
+
+                    break
+
+                if not learner_answer:
+                    print("Please enter an answer or type END.")
+                    continue
+
+                # Save learner's answer
+
+                conversation_history.append({
+                    "role": "user",
+                    "content": learner_answer
+                })
+
+                # Ask AI to evaluate the answer
+
+                response = get_study_buddy_response(
+                    conversation_history
+                )
+
+            # PROCESS 2: Display AI evaluation and feedback
+
+            elif response["type"] == "evaluation":
+
+                conversation_history.append({
+                    "role": "assistant",
+                    "content": json.dumps(response)
+                })
+
+                print("\nSTUDY BUDDY - FEEDBACK")
+                print("-" * 35)
+
+                if response["is_correct"]:
+                    print("Result: Correct")
+                else:
+                    print("Result: Incorrect")
+
+                print(
+                    "Score:",
+                    response["score"],
+                    "/",
+                    response["max_score"]
+                )
+
+                print("Feedback:", response["feedback"])
+                print("Explanation:", response["explanation"])
+
+                # Ask AI what should happen next
+
+                response = get_study_buddy_response(
+                    conversation_history
+                )
+
+            else:
+
+                print("Unexpected AI response. Ending the session.")
+                break
+
+        # PROCESS 3: Generate final study summary
+
+        print("\nGENERATING YOUR STUDY SUMMARY...")
+
+        summary = generate_session_summary(
+            conversation_history
+        )
+
+        print("\nYOUR FINAL STUDY SUMMARY")
+        print("=" * 40)
+
+        print(json.dumps(summary, indent=4))
+
+        # PROCESS 4: Create study session record
+
+        session = create_session(
+            f"{subject} - {topic}",
+            messages=conversation_history,
+            summary=json.dumps(summary, indent=4)
+        )
+
+        # PROCESS 5: Save the study session
+
+        saved_file = save_session(session)
+
+        if saved_file:
+
+            print("\nYour study session has been saved successfully!")
+            print("Saved file:", saved_file)
+
+        else:
+
+            print("\nYour study summary was generated, but saving failed.")
+
+    except Exception as error:
+
+        print("\nAn error occurred during the AI study session.")
+        print("Error:", error)
+
+
+# FUNCTION 6: Run the complete study session
 
 def run_study_session():
 
-    # Get the student's name
+    # Get learner's name
+
     student_name = get_student_information()
 
     if student_name is None:
         return
 
-    # Let the student choose a subject
+    # Select a subject
+
     subject = select_subject()
 
-    # Ask the student for a topic
+    # Get the topic
+
     topic = get_topic()
 
-    # Display the selected information
+    # Display selected information
+
     display_session_information(
         student_name,
         subject,
         topic
     )
 
-    # Temporary message until AI integration
-    print("\nYour study session is ready!")
-    print("The AI question and answer module")
-    print("will be connected in the next development stage.")
+    # Start AI tutoring interaction
+
+    run_ai_tutoring(
+        student_name,
+        subject,
+        topic
+    )
 
     input("\nPress Enter to return to the main menu...")
