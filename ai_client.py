@@ -1,9 +1,8 @@
 
-# ============================================
+
 # STUDY BUDDY - AI STUDY ASSISTANT
 # Member 2: AI Integration and JSON Validation
 # File: ai_client.py
-# ============================================
 
 import os
 import json
@@ -14,18 +13,15 @@ from openai import OpenAI
 from prompts import SYSTEM_PROMPT, SUMMARY_PROMPT
 
 
-# --------------------------------------------
 # STEP 1: Load environment variables
-# --------------------------------------------
 
 load_dotenv(override=True)
 
 MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
-# --------------------------------------------
 # STEP 2: Connect to OpenAI
-# --------------------------------------------
+
 
 def get_openai_client():
 
@@ -40,9 +36,7 @@ def get_openai_client():
     return OpenAI(api_key=api_key)
 
 
-# --------------------------------------------
 # STEP 3: Validate study responses
-# --------------------------------------------
 
 def validate_study_response(data):
 
@@ -96,9 +90,7 @@ def validate_study_response(data):
     return True
 
 
-# --------------------------------------------
 # STEP 4: Validate summary responses
-# --------------------------------------------
 
 def validate_summary(data):
 
@@ -166,9 +158,8 @@ def validate_summary(data):
     return True
 
 
-# --------------------------------------------
 # STEP 5: Send request and retry invalid JSON
-# --------------------------------------------
+
 
 
 def request_json(instructions, conversation_history, validator):
@@ -253,9 +244,7 @@ def get_study_buddy_response(conversation_history):
     )
 
 
-# --------------------------------------------
 # STEP 7: Generate the final study summary
-# --------------------------------------------
 
 def generate_session_summary(conversation_history):
 

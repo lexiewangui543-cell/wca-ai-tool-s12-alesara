@@ -1,15 +1,11 @@
 
-# ============================================
 # STUDY BUDDY - AI STUDY ASSISTANT
 # Member 2: Prompt Engineering
 # File: prompts.py
-# ============================================
 
 
-# --------------------------------------------
 # PROMPT 1: SYSTEM PROMPT
 # R-T-C-C-O FRAMEWORK
-# --------------------------------------------
 
 SYSTEM_PROMPT = """
 ROLE:
@@ -83,10 +79,8 @@ not receive a list of questions all at once.
 """
 
 
-# --------------------------------------------
 # PROMPT 2: SUMMARY PROMPT
 # R-T-C-C-O FRAMEWORK
-# --------------------------------------------
 
 SUMMARY_PROMPT = """
 ROLE:
