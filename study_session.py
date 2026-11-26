@@ -95,7 +95,8 @@ def display_session_information(name, subject, topic):
 
 def run_ai_tutoring(student_name, subject, topic):
 
-    # Create the conversation history
+    # Create conversation history
+
     conversation_history = [
         {
             "role": "user",
@@ -114,6 +115,7 @@ def run_ai_tutoring(student_name, subject, topic):
     try:
 
         # Request the first question from the AI
+
         response = get_study_buddy_response(
             conversation_history
         )
@@ -124,7 +126,6 @@ def run_ai_tutoring(student_name, subject, topic):
 
             if response["type"] == "question":
 
-                # Save the AI response in conversation history
                 conversation_history.append({
                     "role": "assistant",
                     "content": json.dumps(response)
@@ -136,10 +137,12 @@ def run_ai_tutoring(student_name, subject, topic):
 
                 print("\nType END whenever you want to finish.")
 
-                # Collect the learner's answer
+                # Collect learner's answer
+
                 learner_answer = input("\nYour answer: ").strip()
 
-                # Check whether the learner wants to end
+                # Check whether learner wants to end
+
                 if learner_answer.upper() == "END":
 
                     conversation_history.append({
@@ -156,13 +159,15 @@ def run_ai_tutoring(student_name, subject, topic):
                     print("Please enter an answer or type END.")
                     continue
 
-                # Save the learner's answer
+                # Save learner's answer
+
                 conversation_history.append({
                     "role": "user",
                     "content": learner_answer
                 })
 
-                # Ask the AI to evaluate the answer
+                # Ask AI to evaluate the answer
+
                 response = get_study_buddy_response(
                     conversation_history
                 )
@@ -171,7 +176,6 @@ def run_ai_tutoring(student_name, subject, topic):
 
             elif response["type"] == "evaluation":
 
-                # Save the AI evaluation
                 conversation_history.append({
                     "role": "assistant",
                     "content": json.dumps(response)
@@ -195,7 +199,8 @@ def run_ai_tutoring(student_name, subject, topic):
                 print("Feedback:", response["feedback"])
                 print("Explanation:", response["explanation"])
 
-                # Ask the AI what should happen next
+                # Ask AI what should happen next
+
                 response = get_study_buddy_response(
                     conversation_history
                 )
@@ -205,7 +210,7 @@ def run_ai_tutoring(student_name, subject, topic):
                 print("Unexpected AI response. Ending the session.")
                 break
 
-        # PROCESS 3: Generate the final study summary
+        # PROCESS 3: Generate final study summary
 
         print("\nGENERATING YOUR STUDY SUMMARY...")
 
@@ -218,7 +223,7 @@ def run_ai_tutoring(student_name, subject, topic):
 
         print(json.dumps(summary, indent=4))
 
-        # PROCESS 4: Create a study session record
+        # PROCESS 4: Create study session record
 
         session = create_session(
             f"{subject} - {topic}",
@@ -249,26 +254,31 @@ def run_ai_tutoring(student_name, subject, topic):
 
 def run_study_session():
 
-    # Get the learner's name
+    # Get learner's name
+
     student_name = get_student_information()
 
     if student_name is None:
         return
 
     # Select a subject
+
     subject = select_subject()
 
     # Get the topic
+
     topic = get_topic()
 
-    # Display the selected information
+    # Display selected information
+
     display_session_information(
         student_name,
         subject,
         topic
     )
 
-    # Start the AI tutoring interaction
+    # Start AI tutoring interaction
+
     run_ai_tutoring(
         student_name,
         subject,
